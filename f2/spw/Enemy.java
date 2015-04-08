@@ -18,12 +18,12 @@ public class Enemy extends Sprite{
 
 	@Override
 	public void draw(Graphics2D g) {
-		if(y < Y_TO_FADE)
+		/*if(y < Y_TO_FADE)
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 		else{
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 
 					(float)(Y_TO_DIE - y)/(Y_TO_DIE - Y_TO_FADE)));
-		}
+		}*/
 		g.setColor(Color.RED);
 		g.fillRect(x, y, width, height);
 		
@@ -34,6 +34,10 @@ public class Enemy extends Sprite{
 		if(y > Y_TO_DIE){
 			alive = false;
 		}
+	}
+	
+	void goToHell(){
+		alive = false;
 	}
 	
 	public boolean isAlive(){

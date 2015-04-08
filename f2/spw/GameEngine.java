@@ -23,6 +23,8 @@ public class GameEngine implements KeyListener, GameReporter{
 	private long score = 0;
 	private double difficulty = 0.1;
 	
+	private int life = 5;
+
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
 		this.v = v;		
@@ -67,7 +69,7 @@ public class GameEngine implements KeyListener, GameReporter{
 		while(e_iter.hasNext()){
 			Enemy e = e_iter.next();
 			e.proceed();
-			
+
 			if(!e.isAlive()){
 				e_iter.remove();
 				gp.sprites.remove(e);
@@ -83,14 +85,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			er = e.getRectangle();
 			if(er.intersects(vr)){
 				die();
-				return;
-			}
-		}
-
-		for(BonusItem b : bonusItems){
-			er = b.getRectangle();
-			if(er.intersects(vr)){
-				score += 100;
+				e.goToHell();
 				return;
 			}
 		}
@@ -106,11 +101,11 @@ public class GameEngine implements KeyListener, GameReporter{
 		while(b_iter.hasNext()){
 			BonusItem b = b_iter.next();
 			b.proceed();
-			
+
 			if(!b.isAlive()){
 				b_iter.remove();
 				gp.sprites.remove(b);
-				score += 1;
+				score += 100;
 			}
 		}
 
@@ -121,14 +116,18 @@ public class GameEngine implements KeyListener, GameReporter{
 		for(BonusItem b : bonusItems){
 			er = b.getRectangle();
 			if(er.intersects(vr)){
-				score += 100;
+				b.goToHell();
 				return;
 			}
 		}
 	}
 	
 	public void die(){
-		timer.stop();
+		life--;
+		if(life < 1){
+			timer.stop();
+		}
+			
 	}
 	
 	void controlVehicle(KeyEvent e) {
@@ -149,6 +148,10 @@ public class GameEngine implements KeyListener, GameReporter{
 		return score;
 	}
 	
+	public int getLife(){
+		return life;
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		controlVehicle(e);
