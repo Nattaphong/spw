@@ -15,15 +15,13 @@ public class GameEngine implements KeyListener, GameReporter{
 	GamePanel gp;
 		
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();	
-	private ArrayList<BonusItem> bonusItems = new ArrayList<BonusItem>();
+
 	private SpaceShip v;	
 	
 	private Timer timer;
 	
 	private long score = 0;
 	private double difficulty = 0.1;
-	
-	private int life = 5;
 
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
@@ -36,7 +34,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				process();
-				processItem();
+				//processItem();
 			}
 		});
 		timer.setRepeats(true);
@@ -56,13 +54,17 @@ public class GameEngine implements KeyListener, GameReporter{
 	private void generateBonusItem(){
 		BonusItem b = new BonusItem((int)(Math.random()*390), 30);
 		gp.sprites.add(b);
-		bonusItems.add(b);
+		enemies.add(b);
 	}
 
 
 	private void process(){
 		if(Math.random() < difficulty){
 			generateEnemy();
+		}
+
+		if(Math.random() < difficulty/10){
+			generateBonusItem();
 		}
 		
 		Iterator<Enemy> e_iter = enemies.iterator();
@@ -84,50 +86,26 @@ public class GameEngine implements KeyListener, GameReporter{
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
-				die();
-				e.goToHell();
+				if(e instanceof BonusItem){
+					score+=100;
+					e.goToHell();
+				}
+				else if(e instanceof Enemy){
+					die();
+					e.goToHell();
+					gp.updateGameUI(this);
+				}
 				return;
 			}
 		}
 	}
 
 
-	private void processItem(){
-		if(Math.random() < difficulty/10){
-			generateBonusItem();
-		}
-
-		Iterator<BonusItem> b_iter = bonusItems.iterator();
-		while(b_iter.hasNext()){
-			BonusItem b = b_iter.next();
-			b.proceed();
-
-			if(!b.isAlive()){
-				b_iter.remove();
-				gp.sprites.remove(b);
-				score += 100;
-			}
-		}
-
-		gp.updateGameUI(this);
-		
-		Rectangle2D.Double vr = v.getRectangle();
-		Rectangle2D.Double er;
-		for(BonusItem b : bonusItems){
-			er = b.getRectangle();
-			if(er.intersects(vr)){
-				b.goToHell();
-				return;
-			}
-		}
-	}
-	
 	public void die(){
-		life--;
-		if(life < 1){
+		v.die();
+		if(v.getLife() < 1){
 			timer.stop();
-		}
-			
+		}	
 	}
 	
 	void controlVehicle(KeyEvent e) {
@@ -149,7 +127,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	}
 	
 	public int getLife(){
-		return life;
+		return v.getLife();
 	}
 
 	@Override
