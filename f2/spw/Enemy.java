@@ -10,7 +10,7 @@ public class Enemy extends Sprite{
 	
 	private int step = 12;
 	private boolean alive = true;
-	
+
 	public Enemy(int x, int y) {
 		super(x, y, 5, 10);
 		
@@ -36,11 +36,15 @@ public class Enemy extends Sprite{
 		}
 	}
 	
-	void goToHell(){
-		alive = false;
-	}
-	
 	public boolean isAlive(){
 		return alive;
+	}
+
+	public void goToHell(){
+		alive = false;
+	}
+
+	public int getScored(){
+		return 0;
 	}
 }

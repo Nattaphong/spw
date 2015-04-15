@@ -22,6 +22,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	
 	private long score = 0;
 	private double difficulty = 0.1;
+	private int level = 0;
 
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
@@ -57,6 +58,11 @@ public class GameEngine implements KeyListener, GameReporter{
 		enemies.add(b);
 	}
 
+	private void generateMinusEnemy(){
+		EnemyMinus em = new EnemyMinus((int)(Math.random()*390), 30);
+		gp.sprites.add(em);
+		enemies.add(em);
+	}
 
 	private void process(){
 		if(Math.random() < difficulty){
@@ -67,6 +73,12 @@ public class GameEngine implements KeyListener, GameReporter{
 			generateBonusItem();
 		}
 		
+		if(level==1){
+			if(Math.random() < difficulty/2){
+				generateMinusEnemy();
+			}
+		}		
+
 		Iterator<Enemy> e_iter = enemies.iterator();
 		while(e_iter.hasNext()){
 			Enemy e = e_iter.next();
@@ -76,6 +88,7 @@ public class GameEngine implements KeyListener, GameReporter{
 				e_iter.remove();
 				gp.sprites.remove(e);
 				score += 1;
+				level();
 			}
 		}
 		
@@ -87,13 +100,18 @@ public class GameEngine implements KeyListener, GameReporter{
 			er = e.getRectangle();
 			if(er.intersects(vr)){
 				if(e instanceof BonusItem){
-					score+=100;
+					//score+=100;
+					score+=e.getScored();
 					e.goToHell();
 				}
 				else if(e instanceof Enemy){
 					die();
 					e.goToHell();
 					gp.updateGameUI(this);
+				}
+				if(e instanceof EnemyMinus){
+					score+=e.getScored();
+					e.goToHell();
 				}
 				return;
 			}
@@ -122,12 +140,28 @@ public class GameEngine implements KeyListener, GameReporter{
 		}
 	}
 
+	public void level(){
+		if(score > 1000){
+			level = 1;
+		}
+		else if(score > 2000){
+			level = 2;
+		}
+		else if(score > 3000){
+			level = 3;
+		}
+	}
+
 	public long getScore(){
 		return score;
 	}
 	
 	public int getLife(){
 		return v.getLife();
+	}
+
+	public int getLevel(){
+		return level;
 	}
 
 	@Override
