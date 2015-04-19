@@ -4,19 +4,15 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class EnemyMinus extends Enemy{
+public class LifeItem extends Enemy{
 	
-	public EnemyMinus(int x, int y) {
+	public LifeItem(int x, int y) {
 		super(x, y);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.ORANGE);
+		g.setColor(Color.BLUE);
 		g.fillRect(x, y, width, height);
-	}
-
-	public int getScored(){
-		return -100;
 	}
 }

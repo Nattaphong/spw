@@ -35,7 +35,6 @@ public class GameEngine implements KeyListener, GameReporter{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				process();
-				//processItem();
 			}
 		});
 		timer.setRepeats(true);
@@ -64,6 +63,12 @@ public class GameEngine implements KeyListener, GameReporter{
 		enemies.add(em);
 	}
 
+	private void generateLifeItem(){
+		LifeItem l = new LifeItem((int)(Math.random()*390), 30);
+		gp.sprites.add(l);
+		enemies.add(l);
+	}
+
 	private void process(){
 		if(Math.random() < difficulty){
 			generateEnemy();
@@ -73,6 +78,10 @@ public class GameEngine implements KeyListener, GameReporter{
 			generateBonusItem();
 		}
 		
+		if(Math.random() < difficulty){
+			generateLifeItem();
+		}
+
 		if(level==1){
 			if(Math.random() < difficulty/2){
 				generateMinusEnemy();
@@ -99,7 +108,11 @@ public class GameEngine implements KeyListener, GameReporter{
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
-				if(e instanceof BonusItem){
+				if(e instanceof LifeItem){
+					v.addLife();
+					//die();
+					e.goToHell();
+				}else if(e instanceof BonusItem){
 					//score+=100;
 					score+=e.getScored();
 					e.goToHell();
@@ -109,7 +122,7 @@ public class GameEngine implements KeyListener, GameReporter{
 					e.goToHell();
 					gp.updateGameUI(this);
 				}
-				if(e instanceof EnemyMinus){
+				else if(e instanceof EnemyMinus){
 					score+=e.getScored();
 					e.goToHell();
 				}
