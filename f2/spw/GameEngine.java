@@ -24,6 +24,8 @@ public class GameEngine implements KeyListener, GameReporter{
 	private double difficulty = 0.1;
 	private int level = 0;
 
+	private int count = 10000;													// 10 s
+
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
 		this.v = v;		
@@ -69,6 +71,12 @@ public class GameEngine implements KeyListener, GameReporter{
 		enemies.add(l);
 	}
 
+	private void generateSpeedUpItem(){
+		SpeedUpItem sp = new SpeedUpItem((int)(Math.random()*390), 30);
+		gp.sprites.add(sp);
+		enemies.add(sp);
+	}
+
 	private void process(){
 		if(Math.random() < difficulty){
 			generateEnemy();
@@ -78,7 +86,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			generateBonusItem();
 		}
 		
-		if(Math.random() < difficulty){
+		if(Math.random() < difficulty/20){
 			generateLifeItem();
 		}
 
@@ -86,7 +94,14 @@ public class GameEngine implements KeyListener, GameReporter{
 			if(Math.random() < difficulty/2){
 				generateMinusEnemy();
 			}
-		}		
+			timer.setDelay(40);
+		}
+
+		//if(level==2){
+			if(Math.random() < difficulty){
+				generateSpeedUpItem();
+			}	
+		//}		
 
 		Iterator<Enemy> e_iter = enemies.iterator();
 		while(e_iter.hasNext()){
@@ -108,7 +123,13 @@ public class GameEngine implements KeyListener, GameReporter{
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
-				if(e instanceof LifeItem){
+				if(e instanceof SpeedUpItem){
+					e.goToHell();
+					timer.setDelay(10);
+					speedUp();
+					gp.updateGameUI(this);
+				}
+				else if(e instanceof LifeItem){
 					v.addLife();
 					//die();
 					e.goToHell();
@@ -131,7 +152,6 @@ public class GameEngine implements KeyListener, GameReporter{
 		}
 	}
 
-
 	public void die(){
 		v.die();
 		if(v.getLife() < 1){
@@ -153,14 +173,23 @@ public class GameEngine implements KeyListener, GameReporter{
 		}
 	}
 
-	public void level(){
-		if(score > 1000){
+	public void speedUp(){
+		if(count < 0){
+			count--;
+		}
+		else if(count == 0){
+			timer.setDelay(40);
+		}
+	}
+
+	public void level(){									//test level
+		if(score > 100){
 			level = 1;
 		}
-		else if(score > 2000){
+		else if(score > 200){
 			level = 2;
 		}
-		else if(score > 3000){
+		else if(score > 300){
 			level = 3;
 		}
 	}
@@ -175,6 +204,41 @@ public class GameEngine implements KeyListener, GameReporter{
 
 	public int getLevel(){
 		return level;
+	}
+
+	public int getSpeedTime(){
+		if(count == 10000){
+			return 10;
+		}
+		else if(count < 10000 && count > 9000){
+			return 9;
+		}
+		else if(count < 9000 && count > 8000){
+			return 8;
+		}
+		else if(count < 8000 && count > 7000){
+			return 7;
+		}
+		else if(count < 7000 && count > 6000){
+			return 6;
+		}
+		else if(count < 6000 && count > 5000){
+			return 5;
+		}
+		else if(count < 5000 && count > 4000){
+			return 4;
+		}
+		else if(count < 4000 && count > 3000){
+			return 3;
+		}
+		else if(count < 3000 && count > 2000){
+			return 2;
+		}
+		else if(count < 2000 && count > 1000){
+			return 1;
+		}
+		else
+			return 0;
 	}
 
 	@Override
