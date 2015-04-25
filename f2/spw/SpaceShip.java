@@ -28,8 +28,8 @@ public class SpaceShip extends Sprite{
 			x = 400 - width;
 	}
 
-	public void die(){
-		life--;
+	public void die(int lifeToDie){
+		life = life - lifeToDie;
 	}
 
 	public int getLife(){

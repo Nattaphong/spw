@@ -24,13 +24,13 @@ public class GamePanel extends JPanel {
 		big.clearRect(0, 0, 400, 600);
 		
 		big.setColor(Color.WHITE);		
-		big.drawString(String.format("Score : %08d", reporter.getScore()), 280, 20);
-		big.drawString(String.format("Life : %d", reporter.getLife()), 5, 20);
-		big.drawString(String.format("Level : %d", reporter.getLevel()), 50, 20);
+		big.drawString(String.format("Score : %08d", reporter.getScore()), 280, 20);		//show score on game
+		big.drawString(String.format("Life : %d", reporter.getLife()), 5, 20);				//show amount life on game
+		big.drawString(String.format("Level : %d", reporter.getLevel()), 50, 20);			//show level of your game
 
-		if(reporter.getSpeedTime() >= 0){
+		/*if(reporter.getSpeedTime() >= 0){
 			big.drawString(String.format("Speed Time : %d", reporter.getSpeedTime()), 100, 20);
-		}
+		}*/
 
 		for(Sprite s : sprites){
 			s.draw(big);

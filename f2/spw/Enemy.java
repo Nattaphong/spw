@@ -16,6 +16,11 @@ public class Enemy extends Sprite{
 		
 	}
 
+	public Enemy(int x, int y, int z1, int z2) {
+		super(x, y, z1, z2);
+		
+	}
+
 	@Override
 	public void draw(Graphics2D g) {
 		/*if(y < Y_TO_FADE)
