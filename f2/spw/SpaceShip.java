@@ -8,6 +8,8 @@ public class SpaceShip extends Sprite{
 	int step = 8;
 	private int life = 5;
 	
+	private boolean colorCheck = true;
+
 	public SpaceShip(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		
@@ -15,7 +17,12 @@ public class SpaceShip extends Sprite{
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.GREEN);
+		if(colorCheck){
+			g.setColor(Color.GREEN);
+		}
+		else if(!colorCheck){
+			g.setColor(Color.GRAY);
+		}
 		g.fillRect(x, y, width, height);
 		
 	}
@@ -28,8 +35,8 @@ public class SpaceShip extends Sprite{
 			x = 400 - width;
 	}
 
-	public void die(int lifeToDie){
-		life = life - lifeToDie;
+	public void spaceShipDie(){
+		life--;
 	}
 
 	public int getLife(){
@@ -39,6 +46,18 @@ public class SpaceShip extends Sprite{
 	public void addLife(){
 		if(life < 10){
 			life++;
+		}
+	}
+
+	public void setColorCheck(){
+		if(colorCheck){
+			colorCheck = false;
+		}
+	}
+
+	public void setColorDefault(){
+		if(!colorCheck){
+			colorCheck = true;
 		}
 	}
 }

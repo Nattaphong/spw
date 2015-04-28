@@ -16,8 +16,8 @@ public class Enemy extends Sprite{
 		
 	}
 
-	public Enemy(int x, int y, int z1, int z2) {
-		super(x, y, z1, z2);
+	public Enemy(int x, int y, int w, int h) {
+		super(x, y, w, h);
 		
 	}
 
@@ -40,6 +40,10 @@ public class Enemy extends Sprite{
 			alive = false;
 		}
 	}
+
+	public void setStep(int x) {
+		this.step += x;
+	}
 	
 	public boolean isAlive(){
 		return alive;
@@ -49,7 +53,7 @@ public class Enemy extends Sprite{
 		alive = false;
 	}
 
-	public int getScored(){
+	public int scoreBonus(){
 		return 0;
 	}
 }

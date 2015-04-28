@@ -22,7 +22,12 @@ public class GameEngine implements KeyListener, GameReporter{
 	
 	private long score = 0;														//score
 	private double difficulty = 0.1;
-	private int level = 0;														//level 
+	private int level = 0;
+
+	// set immortal item step & active
+	private int immortal_step = 3;
+	private Boolean immortal_active = false;
+	private long immortal_duration = 0;											 
 
 	private int count = 10000;													// 10 s
 
@@ -46,86 +51,103 @@ public class GameEngine implements KeyListener, GameReporter{
 	public void start(){
 		timer.start();
 	}
+
+	private void setEnemyStep(int step){
+		for(Enemy e : enemies){
+			e.setStep(step);
+		}
+	}
 	
-	private void generateEnemy(){												//add "Enemy" to ArrayList<Enemy> enemies
+	// Enemy
+	private void generateEnemy(){							//add "Enemy" to ArrayList<Enemy> enemies
 		Enemy e = new Enemy((int)(Math.random()*390), 30);
+		if (immortal_active)								//> check if item immortal it's work to add more step to enemy
+			e.setStep(immortal_step);
 		gp.sprites.add(e);
 		enemies.add(e);
 	}
 	
-	private void generateBonusItem(){											//add "BonusItem" to ArrayList<Enemy> enemies
-		BonusItem b = new BonusItem((int)(Math.random()*390), 30);
-		gp.sprites.add(b);
-		enemies.add(b);
-	}
-
-	private void generateMinusEnemy(){											//add "MinusEnemy" to ArrayList<Enemy> enemies
+	private void generateMinusEnemy(){						//add "MinusEnemy" to ArrayList<Enemy> enemies
 		EnemyMinus em = new EnemyMinus((int)(Math.random()*390), 30);
 		gp.sprites.add(em);
 		enemies.add(em);
 	}
 
-	private void generateLifeItem(){											//add "LifeItem" to ArrayList<Enemy> enemies
-		LifeItem l = new LifeItem((int)(Math.random()*390), 30);
-		gp.sprites.add(l);
-		enemies.add(l);
-	}
-
-	/*private void generateSpeedUpItem(){											//add "SpeedUpItem" to ArrayList<Enemy> enemies
-		SpeedUpItem sp = new SpeedUpItem((int)(Math.random()*390), 30);
-		gp.sprites.add(sp);
-		enemies.add(sp);
-	}*/
-
-	private void generateImmortalItem(){										//add "ImmortalItem" to ArrayList<Enemy> enemies
-		ImmortalItem im = new ImmortalItem((int)(Math.random()*390), 30);
-		gp.sprites.add(im);
-		enemies.add(im);
-	}
-
-	private void generateEnemyBig(){											//add "EnemyBig" to ArrayList<Enemy> enemies
+	private void generateBigEnemy(){						//add "EnemyBig" to ArrayList<Enemy> enemies
 		EnemyBig eb = new EnemyBig((int)(Math.random()*390), 30);
 		gp.sprites.add(eb);
 		enemies.add(eb);
 	}
-	
+
+	// Item
+	private void generateItemBonus(){						//add "ItemBonus" to ArrayList<Enemy> enemies
+		ItemBonus b = new ItemBonus((int)(Math.random()*390), 30);
+		gp.sprites.add(b);
+		enemies.add(b);
+	}
+
+	private void generateItemLife(){						//add "ItemLife" to ArrayList<Enemy> enemies
+		ItemLife l = new ItemLife((int)(Math.random()*390), 30);
+		gp.sprites.add(l);
+		enemies.add(l);
+	}
+
+	private void generateItemImmortal(){					//add "ItemImmortal" to ArrayList<Enemy> enemies
+		ItemImmortal im = new ItemImmortal((int)(Math.random()*390), 30);
+		gp.sprites.add(im);
+		enemies.add(im);
+	}
+
+	/*private void generateItemSpeedUp(){						//add "ItemSpeedUp" to ArrayList<Enemy> enemies
+		ItemSpeedUp sp = new ItemSpeedUp((int)(Math.random()*390), 30);
+		gp.sprites.add(sp);
+		enemies.add(sp);
+	}*/
+
 	private void process(){
-		if(Math.random() < difficulty){											//to create may Item and Enemy
+
+		if(((immortal_duration - System.currentTimeMillis()) < 0) && immortal_active){   //function of Immortal Item
+			v.setColorDefault();							//set normal color to SpaceShip
+			setEnemyStep(-1*immortal_step);					//set enemy step to normal
+			immortal_active = false;
+		}
+
+		if(Math.random() < difficulty){							//to create my Item and Enemy
 			generateEnemy();
 		}
 
 		if(Math.random() < difficulty/10){
-			generateBonusItem();
+			generateItemBonus();
 		}
 		
 		if(Math.random() < difficulty/20){
-			generateLifeItem();
+			generateItemLife();
 		}
 
-		if(level==1){
+		if(level==1){											//level 1 >>> Minus Enemy + Time
 			if(Math.random() < difficulty/2){
 				generateMinusEnemy();
 			}
 			//timer.setDelay(40);
 		}
 /*
-		//if(level==2){
+		//if(level==2){											//level 2 >>> Speed Up Item + Immortal Item
 			if(Math.random() < difficulty){
-				generateSpeedUpItem();
+				generateItemSpeedUp();
 			}	
 		//}		
 */
 		if(level==2){
 			if(Math.random() < difficulty/2){
-				generateImmortalItem();
+				generateItemImmortal();
 			}	
 		}		
 
-		//if(level==3){
+		if(level==3){											//level 3 >>> Big Enemy
 			if(Math.random() < difficulty/2){
-				generateEnemyBig();
+				generateBigEnemy();
 			}	
-		//}
+		}
 
 		Iterator<Enemy> e_iter = enemies.iterator();
 		while(e_iter.hasNext()){
@@ -135,7 +157,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			if(!e.isAlive()){
 				e_iter.remove();
 				gp.sprites.remove(e);
-				score += 1;
+				score += 10;
 				level();
 			}
 		}
@@ -147,65 +169,68 @@ public class GameEngine implements KeyListener, GameReporter{
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
-				if(e instanceof EnemyBig){
-					die2();
-					if(score > 500)
-						score+=e.getScored();
-					else if(score <500)
-						score = 0;
+				if(e instanceof ItemBonus){								//Bonus Item : YELLO
+					score+=e.scoreBonus();
 					e.goToHell();
 				}
-
-				if(e instanceof ImmortalItem){										//check ImmortalItem
-					
+				else if(e instanceof ItemLife){							//Life Item : BLUE
+					v.addLife();
+					e.goToHell();
 				}
-				/*if(e instanceof SpeedUpItem){										//check SppedUpItem
+				else if(e instanceof ItemImmortal){						//Immortal Item : GRAY
+					v.setColorCheck();										//Set new color
+					e.goToHell();
+					if(!immortal_active){
+						setEnemyStep(immortal_step);
+						immortal_duration = System.currentTimeMillis() + 10000;
+						immortal_active = true;
+					}
+				}
+				/*else if(e instanceof ItemSpeedUp){					//Spped Up Item : CYAN
 					e.goToHell();
 					timer.setDelay(10);
 					speedUp();
 					gp.updateGameUI(this);
 				}*/
-				else if(e instanceof LifeItem){										//check Life Item
-					v.addLife();
-					//die();
-					e.goToHell();
-				}else if(e instanceof BonusItem){									//check BonusItem
-					//score+=100;
-					score+=e.getScored();
-					e.goToHell();
-				}
-				else if(e instanceof Enemy){										//check Enemy
+
+				// Enemy
+				else if(e instanceof EnemyBig){							//Big Enermy : PINK
+					die();
 					die();
 					e.goToHell();
-					gp.updateGameUI(this);
+					if(score > 500)
+						score+=e.scoreBonus();
+					else if(score <500)
+						score = 0;
 				}
-				else if(e instanceof EnemyMinus){									//check EnemyMinus
+				
+				else if(e instanceof EnemyMinus){						//Minus Enemy : ORANGE
 					if(score > 100)
-						score+=e.getScored();
+						score+=e.scoreBonus();
 					if(score < 100)
 						score = 0;
 					e.goToHell();
+				}
+				
+				else if(e instanceof Enemy){							//Enemy : RED
+					die();
+					e.goToHell();
+					gp.updateGameUI(this);
 				}
 				return;
 			}
 		}
 	}
 
-	public void die(){																//die method
-		v.die(1);																	//call die method in SpaceShip
-		if(v.getLife() < 1){														//check life of SpaceShip and set life of SpaceShip to die
-			timer.stop();
-		}	
-	}
-	
-	public void die2(){																//die2 method for EnemyBig
-		v.die(2);																	
-		if(v.getLife() < 1){														
+	public void die(){
+		if(!immortal_active)									//check it when immortal item on work
+			v.spaceShipDie();									//call die method in SpaceShip
+		if(v.getLife() < 1){									//check life of SpaceShip and set life of SpaceShip to die
 			timer.stop();
 		}	
 	}
 
-	void controlVehicle(KeyEvent e) {												//Keyboard games control
+	void controlVehicle(KeyEvent e) {							//Keyboard games control
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
 			v.move(-1);
@@ -219,7 +244,7 @@ public class GameEngine implements KeyListener, GameReporter{
 		}
 	}
 
-	/*public void speedUp(){															//SpeedUp function
+	/*public void speedUp(){									//SpeedUp function
 		if(count < 0){
 			count--;
 		}
@@ -228,33 +253,33 @@ public class GameEngine implements KeyListener, GameReporter{
 		}
 	}*/
 
-	public void level(){															//test level
-		if(score > 100){															//level 1 : score > 1000	
+	public void level(){										//test level
+		if(score > 100){										//level 1 : score > 1000	
 			level = 1;
 		}
-		else if(score > 200){														//level 2 : score > 2000	
+		else if(score > 200){									//level 2 : score > 2000	
 			level = 2;
 		}
-		else if(score > 300){														//level 3 : score > 3000	
+		else if(score > 300){									//level 3 : score > 3000	
 			level = 3;
 		}
 	}
 
-	public long getScore(){															//return score to show on GamePanel
+	public long getScore(){										//return score to show on GamePanel
 		return score;
 	}
 	
-	public int getLife(){
+	public int getLife(){										//return life to show on GamePanel										
 		return v.getLife();
 	}
 
-	public int getLevel(){
+	public int getLevel(){										//return level to show on GamePanel
 		return level;
 	}
 
-	public int getSpeedTime(){
+	/*public int getSpeedTime(){
 		return count;
-	}
+	}*/
 
 	@Override
 	public void keyPressed(KeyEvent e) {

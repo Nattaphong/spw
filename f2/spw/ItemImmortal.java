@@ -4,19 +4,15 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class EnemyBig extends Enemy{
+public class ItemImmortal extends Enemy{
 	
-	public EnemyBig(int x, int y) {
-		super(x, y, 10, 20);
+	public ItemImmortal(int x, int y) {
+		super(x, y);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.PINK);
+		g.setColor(Color.GRAY);
 		g.fillRect(x, y, width, height);
-	}
-
-	public int scoreBonus(){
-		return -500;
 	}
 }

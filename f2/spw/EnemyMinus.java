@@ -16,7 +16,7 @@ public class EnemyMinus extends Enemy{
 		g.fillRect(x, y, width, height);
 	}
 
-	public int getScored(){
+	public int scoreBonus(){
 		return -100;
 	}
 }
