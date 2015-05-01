@@ -5,5 +5,5 @@ public interface GameReporter {
 	long getScore();
 	int getLife();
 	int getLevel();
-	//int getSpeedTime();
+	//long getTime();
 }

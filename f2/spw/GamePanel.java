@@ -26,11 +26,11 @@ public class GamePanel extends JPanel {
 		big.setColor(Color.WHITE);		
 		big.drawString(String.format("Score : %08d", reporter.getScore()), 280, 20);		//show score on game
 		big.drawString(String.format("Life : %d", reporter.getLife()), 5, 20);				//show amount life on game
-		big.drawString(String.format("Level : %d", reporter.getLevel()), 50, 20);			//show level of your game
+		big.drawString(String.format("Level : %d", reporter.getLevel()), 55, 20);			//show level of your game
 
-		/*if(reporter.getSpeedTime() >= 0){
-			big.drawString(String.format("Speed Time : %d", reporter.getSpeedTime()), 100, 20);
-		}*/
+		//if(reporter.getTime() > 0){
+			//big.drawString(String.format("Item Time : %d", reporter.getTime()), 120, 20);
+		//}
 
 		for(Sprite s : sprites){
 			s.draw(big);

@@ -23,13 +23,14 @@ public class GameEngine implements KeyListener, GameReporter{
 	private long score = 0;														//score
 	private double difficulty = 0.1;
 	private int level = 0;
+	private int maxValueLevel = 1000;
 
 	// set immortal item step & active
 	private int immortal_step = 3;
 	private Boolean immortal_active = false;
 	private long immortal_duration = 0;											 
 
-	private int count = 10000;													// 10 s
+	//private int count = 10000;													// 10 s
 
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
@@ -128,7 +129,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			if(Math.random() < difficulty/2){
 				generateMinusEnemy();
 			}
-			//timer.setDelay(40);
+			timer.setDelay(40);
 		}
 /*
 		//if(level==2){											//level 2 >>> Speed Up Item + Immortal Item
@@ -138,7 +139,7 @@ public class GameEngine implements KeyListener, GameReporter{
 		//}		
 */
 		if(level==2){
-			if(Math.random() < difficulty/2){
+			if(Math.random() < difficulty/20){
 				generateItemImmortal();
 			}	
 		}		
@@ -254,14 +255,12 @@ public class GameEngine implements KeyListener, GameReporter{
 	}*/
 
 	public void level(){										//test level
-		if(score > 100){										//level 1 : score > 1000	
-			level = 1;
-		}
-		else if(score > 200){									//level 2 : score > 2000	
-			level = 2;
-		}
-		else if(score > 300){									//level 3 : score > 3000	
-			level = 3;
+		if(score > maxValueLevel){
+			level++;
+			maxValueLevel+=1000;
+			if(level%2 == 0){
+				difficulty+=0.1;
+			}
 		}
 	}
 
@@ -277,9 +276,9 @@ public class GameEngine implements KeyListener, GameReporter{
 		return level;
 	}
 
-	/*public int getSpeedTime(){
-		return count;
-	}*/
+	//public long getTime(){
+	//	return immortal_duration;
+	//}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
