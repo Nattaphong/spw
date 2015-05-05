@@ -28,9 +28,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	// set immortal item step & active
 	private int immortal_step = 3;
 	private Boolean immortal_active = false;
-	private long immortal_duration = 0;											 
-
-	//private int count = 10000;													// 10 s
+	private long immortal_duration = 0;										 
 
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
@@ -99,12 +97,6 @@ public class GameEngine implements KeyListener, GameReporter{
 		enemies.add(im);
 	}
 
-	/*private void generateItemSpeedUp(){						//add "ItemSpeedUp" to ArrayList<Enemy> enemies
-		ItemSpeedUp sp = new ItemSpeedUp((int)(Math.random()*390), 30);
-		gp.sprites.add(sp);
-		enemies.add(sp);
-	}*/
-
 	private void process(){
 
 		if(((immortal_duration - System.currentTimeMillis()) < 0) && immortal_active){   //function of Immortal Item
@@ -125,26 +117,19 @@ public class GameEngine implements KeyListener, GameReporter{
 			generateItemLife();
 		}
 
-		if(level==1){											//level 1 >>> Minus Enemy + Time
+		if(level>=1){											//level 1 >>> Minus Enemy + Time
 			if(Math.random() < difficulty/2){
 				generateMinusEnemy();
 			}
-			timer.setDelay(40);
 		}
-/*
-		//if(level==2){											//level 2 >>> Speed Up Item + Immortal Item
-			if(Math.random() < difficulty){
-				generateItemSpeedUp();
-			}	
-		//}		
-*/
-		if(level==2){
+
+		if(level>=2){											//level 2 >>> Immortal Item
 			if(Math.random() < difficulty/20){
 				generateItemImmortal();
 			}	
 		}		
 
-		if(level==3){											//level 3 >>> Big Enemy
+		if(level>=3){											//level 3 >>> Big Enemy
 			if(Math.random() < difficulty/2){
 				generateBigEnemy();
 			}	
@@ -179,7 +164,7 @@ public class GameEngine implements KeyListener, GameReporter{
 					e.goToHell();
 				}
 				else if(e instanceof ItemImmortal){						//Immortal Item : GRAY
-					v.setColorCheck();										//Set new color
+					v.setColorCheck();									//Set new color
 					e.goToHell();
 					if(!immortal_active){
 						setEnemyStep(immortal_step);
@@ -187,12 +172,6 @@ public class GameEngine implements KeyListener, GameReporter{
 						immortal_active = true;
 					}
 				}
-				/*else if(e instanceof ItemSpeedUp){					//Spped Up Item : CYAN
-					e.goToHell();
-					timer.setDelay(10);
-					speedUp();
-					gp.updateGameUI(this);
-				}*/
 
 				// Enemy
 				else if(e instanceof EnemyBig){							//Big Enermy : PINK
@@ -216,8 +195,9 @@ public class GameEngine implements KeyListener, GameReporter{
 				else if(e instanceof Enemy){							//Enemy : RED
 					die();
 					e.goToHell();
-					gp.updateGameUI(this);
+					//gp.updateGameUI(this);
 				}
+				gp.updateGameUI(this);
 				return;
 			}
 		}
@@ -245,15 +225,6 @@ public class GameEngine implements KeyListener, GameReporter{
 		}
 	}
 
-	/*public void speedUp(){									//SpeedUp function
-		if(count < 0){
-			count--;
-		}
-		else if(count == 0){
-			timer.setDelay(40);
-		}
-	}*/
-
 	public void level(){										//test level
 		if(score > maxValueLevel){
 			level++;
@@ -276,14 +247,9 @@ public class GameEngine implements KeyListener, GameReporter{
 		return level;
 	}
 
-	//public long getTime(){
-	//	return immortal_duration;
-	//}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		controlVehicle(e);
-		
 	}
 
 	@Override
