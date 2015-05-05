@@ -184,7 +184,7 @@ public class GameEngine implements KeyListener, GameReporter{
 						score = 0;
 				}
 				
-				else if(e instanceof EnemyMinus){						//Minus Enemy : ORANGE
+				else if(e instanceof EnemyMinus){						//Minus Enemy : MAGENTA
 					if(score > 100)
 						score+=e.scoreBonus();
 					if(score < 100)

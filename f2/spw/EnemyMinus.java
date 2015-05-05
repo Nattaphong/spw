@@ -12,7 +12,7 @@ public class EnemyMinus extends Enemy{
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.setColor(Color.ORANGE);
+		g.setColor(Color.MAGENTA);
 		g.fillRect(x, y, width, height);
 	}
 
